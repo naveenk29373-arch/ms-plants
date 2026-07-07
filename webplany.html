@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Understory — Plants for every room</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1A2318;
+    --paper:#EDEEE2;
+    --card:#F8F8F1;
+    --forest:#3F5D3A;
+    --forest-deep:#2A3F27;
+    --sage:#93A382;
+    --plum:#7C4B63;
+    --plum-deep:#5E3A4C;
+    --sand:#C9A66B;
+    --line: rgba(26,35,24,0.12);
+    --radius: 4px;
+    --shadow: 0 1px 2px rgba(26,35,24,0.06), 0 8px 24px -12px rgba(26,35,24,0.18);
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Work Sans', sans-serif;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.display{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    letter-spacing:-0.01em;
+    color:var(--ink);
+  }
+  .mono{ font-family:'IBM Plex Mono', monospace; letter-spacing:0.01em; }
+  a{ color:inherit; }
+  img,svg{ display:block; max-width:100%; }
+  button{ font-family:inherit; cursor:pointer; border:none; background:none; color:inherit; }
+
+  .wrap{ max-width:1240px; margin:0 auto; padding:0 32px; }
+
+  /* ---------- NAV ---------- */
+  .nav{
+    position:sticky; top:0; z-index:40;
+    background:rgba(237,238,226,0.92);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-inner{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px 32px;
+    max-width:1240px; margin:0 auto;
+  }
+  .logo{
+    font-family:'Fraunces', serif;
+    font-size:1.4rem;
+    font-weight:600;
+    display:flex; align-items:center; gap:8px;
+  }
+  .logo svg{ width:22px; height:22px; }
+  .nav-links{
+    display:flex; gap:32px; font-size:0.92rem;
+    list-style:none;
+  }
+  .nav-links a{
+    text-decoration:none; position:relative; padding-bottom:2px;
+  }
+  .nav-links a:after{
+    content:''; position:absolute; left:0; bottom:0; width:0; height:1px;
+    background:var(--forest); transition:width .25s ease;
+  }
+  .nav-links a:hover:after{ width:100%; }
+  .nav-right{ display:flex; align-items:center; gap:20px; }
+  .cart-btn{
+    display:flex; align-items:center; gap:8px;
+    font-size:0.9rem;
+    padding:8px 14px;
+    border:1px solid var(--ink);
+    border-radius:999px;
+  }
+  .cart-count{
+    background:var(--plum); color:#fff; font-size:0.7rem;
+    width:18px; height:18px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'IBM Plex Mono', monospace;
+  }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    display:grid; grid-template-columns: 1.1fr 0.9fr;
+    align-items:center;
+    gap:48px;
+    padding:72px 32px 96px;
+    max-width:1240px; margin:0 auto;
+    position:relative;
+    overflow:hidden;
+  }
+  .hero-copy .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.78rem;
+    text-transform:uppercase;
+    letter-spacing:0.12em;
+    color:var(--forest-deep);
+    margin-bottom:18px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .eyebrow:before{
+    content:''; width:20px; height:1px; background:var(--forest-deep);
+  }
+  .hero h1{
+    font-size:clamp(2.6rem, 5vw, 4.2rem);
+    line-height:1.02;
+    max-width:11ch;
+  }
+  .hero h1 em{
+    font-style:italic; color:var(--forest);
+  }
+  .hero p{
+    margin-top:24px; max-width:42ch;
+    font-size:1.05rem; color:#3a4238;
+  }
+  .hero-ctas{ display:flex; gap:16px; margin-top:36px; align-items:center; }
+  .btn-primary{
+    background:var(--ink); color:var(--paper);
+    padding:14px 28px; border-radius:999px;
+    font-size:0.92rem; font-weight:500;
+    transition: transform .2s ease, background .2s ease;
+  }
+  .btn-primary:hover{ background:var(--forest-deep); transform:translateY(-1px); }
+  .btn-ghost{
+    font-size:0.92rem; text-decoration:underline; text-underline-offset:4px;
+    color:var(--ink);
+  }
+  .hero-visual{
+    position:relative; height:420px;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .hero-visual svg{ width:100%; height:100%; }
+
+  .leaf-watermark{
+    position:absolute; inset:0; z-index:-1;
+    opacity:0.05; pointer-events:none;
+  }
+
+  /* ---------- LIGHT FILTER STRIP ---------- */
+  .filter-band{
+    border-top:1px solid var(--line);
+    border-bottom:1px solid var(--line);
+    background:var(--card);
+  }
+  .filter-inner{
+    max-width:1240px; margin:0 auto; padding:20px 32px;
+    display:flex; align-items:center; gap:12px;
+    overflow-x:auto;
+  }
+  .filter-label{
+    font-family:'IBM Plex Mono', monospace; font-size:0.75rem;
+    text-transform:uppercase; letter-spacing:0.1em;
+    color:#6b7266; white-space:nowrap; margin-right:8px;
+  }
+  .chip{
+    white-space:nowrap;
+    padding:9px 18px;
+    border-radius:999px;
+    border:1px solid var(--line);
+    font-size:0.85rem;
+    background:transparent;
+    display:flex; align-items:center; gap:8px;
+    transition: all .2s ease;
+  }
+  .chip .dot{ width:8px; height:8px; border-radius:50%; }
+  .chip[data-active="true"]{
+    background:var(--ink); color:var(--paper); border-color:var(--ink);
+  }
+  .chip:hover{ border-color:var(--ink); }
+
+  /* ---------- PRODUCT GRID ---------- */
+  .shop-section{ padding:80px 32px 40px; max-width:1240px; margin:0 auto; }
+  .section-head{
+    display:flex; align-items:flex-end; justify-content:space-between;
+    margin-bottom:40px; gap:24px; flex-wrap:wrap;
+  }
+  .section-head h2{ font-size:2rem; }
+  .section-head p{ color:#5c6355; max-width:40ch; font-size:0.95rem; }
+
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(250px,1fr));
+    gap:28px;
+  }
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    overflow:hidden;
+    display:flex; flex-direction:column;
+    opacity:0; transform:translateY(16px);
+    transition:opacity .6s ease, transform .6s ease, box-shadow .25s ease, border-color .25s ease;
+  }
+  .card.in-view{ opacity:1; transform:translateY(0); }
+  .card:hover{ box-shadow:var(--shadow); border-color:transparent; }
+  .card-art{
+    aspect-ratio:1/1;
+    background: linear-gradient(180deg, #E4E6D6 0%, #DCE0CE 100%);
+    display:flex; align-items:center; justify-content:center;
+    position:relative;
+  }
+  .card-art svg{ width:62%; height:62%; }
+  .badge-light{
+    position:absolute; top:12px; left:12px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.68rem; text-transform:uppercase; letter-spacing:0.06em;
+    background:rgba(248,248,241,0.9);
+    padding:5px 9px; border-radius:999px;
+    display:flex; align-items:center; gap:6px;
+  }
+  .badge-light .dot{ width:6px; height:6px; border-radius:50%; }
+  .card-body{ padding:18px 18px 20px; display:flex; flex-direction:column; gap:10px; flex:1; }
+  .card-body h3{ font-size:1.12rem; font-weight:500; }
+  .card-latin{ font-size:0.8rem; font-style:italic; color:#767d6c; margin-top:-6px; }
+  .card-blurb{ font-size:0.86rem; color:#565d4e; flex:1; }
+  .care-row{ display:flex; align-items:center; gap:6px; }
+  .care-label{ font-size:0.72rem; color:#767d6c; margin-right:4px; font-family:'IBM Plex Mono', monospace; }
+  .care-leaf{ width:13px; height:13px; opacity:0.25; }
+  .care-leaf.filled{ opacity:1; }
+  .card-footer{
+    display:flex; align-items:center; justify-content:space-between;
+    margin-top:6px; padding-top:14px; border-top:1px solid var(--line);
+  }
+  .price{ font-family:'IBM Plex Mono', monospace; font-size:1rem; font-weight:500; }
+  .add-btn{
+    font-size:0.82rem; padding:9px 16px;
+    border:1px solid var(--ink); border-radius:999px;
+    transition: background .2s ease, color .2s ease;
+  }
+  .add-btn:hover{ background:var(--ink); color:var(--paper); }
+
+  /* ---------- CARE BAND ---------- */
+  .care-band{
+    margin-top:96px; padding:72px 32px;
+    background:var(--forest-deep); color:#EDEEE2;
+  }
+  .care-band-inner{
+    max-width:1240px; margin:0 auto;
+    display:grid; grid-template-columns:1fr 1fr 1fr; gap:48px;
+  }
+  .care-band h2{ color:#EDEEE2; font-size:1.7rem; grid-column:1/-1; max-width:24ch; }
+  .care-item .num{ font-family:'IBM Plex Mono', monospace; font-size:0.8rem; color:var(--sand); margin-bottom:10px; }
+  .care-item h4{ font-family:'Fraunces', serif; font-weight:500; font-size:1.1rem; margin-bottom:8px; }
+  .care-item p{ font-size:0.88rem; color:#c4c9ba; }
+
+  /* ---------- NEWSLETTER / FOOTER ---------- */
+  .footer{ padding:80px 32px 40px; max-width:1240px; margin:0 auto; }
+  .footer-top{
+    display:flex; justify-content:space-between; align-items:flex-end;
+    flex-wrap:wrap; gap:32px; padding-bottom:48px; border-bottom:1px solid var(--line);
+  }
+  .footer-top h2{ font-size:1.8rem; max-width:16ch; }
+  .subscribe{ display:flex; gap:0; border-bottom:1px solid var(--ink); padding-bottom:8px; min-width:320px; }
+  .subscribe input{
+    border:none; background:none; font-family:'Work Sans'; font-size:0.95rem;
+    flex:1; outline:none; color:var(--ink);
+  }
+  .subscribe button{ font-size:0.85rem; text-decoration:underline; text-underline-offset:3px; white-space:nowrap; }
+  .footer-bottom{
+    display:flex; justify-content:space-between; padding-top:32px;
+    font-size:0.82rem; color:#767d6c; flex-wrap:wrap; gap:16px;
+  }
+
+  /* ---------- CART DRAWER ---------- */
+  .overlay{
+    position:fixed; inset:0; background:rgba(26,35,24,0.35);
+    opacity:0; pointer-events:none; transition:opacity .3s ease; z-index:50;
+  }
+  .overlay.open{ opacity:1; pointer-events:auto; }
+  .drawer{
+    position:fixed; top:0; right:0; height:100%; width:min(420px, 100%);
+    background:var(--paper); z-index:51;
+    transform:translateX(100%); transition:transform .35s cubic-bezier(.4,0,.2,1);
+    display:flex; flex-direction:column;
+    box-shadow:-8px 0 32px rgba(0,0,0,0.15);
+  }
+  .drawer.open{ transform:translateX(0); }
+  .drawer-head{
+    padding:24px 24px 20px; border-bottom:1px solid var(--line);
+    display:flex; justify-content:space-between; align-items:center;
+  }
+  .drawer-head h3{ font-size:1.3rem; }
+  .drawer-close{ font-size:1.4rem; line-height:1; }
+  .drawer-body{ flex:1; overflow-y:auto; padding:20px 24px; }
+  .drawer-empty{ color:#767d6c; font-size:0.92rem; padding:40px 0; text-align:center; }
+  .cart-item{
+    display:flex; gap:14px; padding:16px 0; border-bottom:1px solid var(--line);
+  }
+  .cart-item-art{ width:64px; height:64px; background:var(--card); border-radius:4px; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+  .cart-item-art svg{ width:72%; height:72%; }
+  .cart-item-info{ flex:1; }
+  .cart-item-info h4{ font-size:0.95rem; font-weight:500; margin-bottom:4px; }
+  .cart-item-controls{ display:flex; align-items:center; gap:10px; margin-top:8px; }
+  .qty-btn{ width:22px; height:22px; border:1px solid var(--line); border-radius:50%; font-size:0.85rem; display:flex; align-items:center; justify-content:center; }
+  .qty-btn:hover{ border-color:var(--ink); }
+  .remove-link{ font-size:0.78rem; color:#8b4f4f; text-decoration:underline; margin-left:auto; }
+  .drawer-foot{ padding:20px 24px 28px; border-top:1px solid var(--line); }
+  .subtotal-row{ display:flex; justify-content:space-between; font-size:0.95rem; margin-bottom:16px; }
+  .subtotal-row .amount{ font-family:'IBM Plex Mono', monospace; font-weight:500; }
+  .checkout-btn{
+    width:100%; background:var(--ink); color:var(--paper);
+    padding:15px; border-radius:999px; font-size:0.95rem; text-align:center;
+  }
+  .checkout-btn:hover{ background:var(--forest-deep); }
+  .drawer-note{ font-size:0.75rem; color:#767d6c; text-align:center; margin-top:12px; }
+
+  /* ---------- TOAST ---------- */
+  .toast{
+    position:fixed; bottom:28px; left:50%; transform:translateX(-50%) translateY(20px);
+    background:var(--ink); color:var(--paper);
+    padding:12px 22px; border-radius:999px; font-size:0.85rem;
+    opacity:0; pointer-events:none; transition:all .3s ease; z-index:60;
+    display:flex; align-items:center; gap:8px;
+  }
+  .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+
+  @media (max-width: 860px){
+    .hero{ grid-template-columns:1fr; padding-top:48px; }
+    .hero-visual{ height:280px; order:-1; }
+    .care-band-inner{ grid-template-columns:1fr; }
+    .care-band h2{ margin-bottom:8px; }
+    .footer-top{ flex-direction:column; align-items:flex-start; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{ transition:none !important; scroll-behavior:auto !important; }
+    .card{ opacity:1; transform:none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ================= NAV ================= -->
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="logo">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M12 22V13" stroke="#3F5D3A" stroke-width="1.6"/><path d="M12 13C12 13 3 12 3 4C11 4 12 13 12 13Z" fill="#93A382"/><path d="M12 13C12 13 21 12 21 4C13 4 12 13 12 13Z" fill="#3F5D3A"/></svg>
+      Understory
+    </div>
+    <ul class="nav-links">
+      <li><a href="#shop">Shop</a></li>
+      <li><a href="#care">Plant care</a></li>
+      <li><a href="#footer">Visit us</a></li>
+    </ul>
+    <div class="nav-right">
+      <button class="cart-btn" id="cartToggle">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 6H21L19 15H8L6 6ZM6 6L5 3H2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="19" r="1.3" fill="currentColor"/><circle cx="18" cy="19" r="1.3" fill="currentColor"/></svg>
+        Cart <span class="cart-count" id="cartCount">0</span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- ================= HERO ================= -->
+<section class="hero">
+  <div class="hero-copy">
+    <div class="eyebrow">Grown in Chennai, shipped nationwide</div>
+    <h1>Bring the <em>understory</em> indoors.</h1>
+    <p>Sixty-two plants, sourced from small growers and quietly hardened off before they reach you — so the only thing you need to learn is where to put them.</p>
+    <div class="hero-ctas">
+      <a href="#shop" class="btn-primary">Shop the collection</a>
+      <a href="#care" class="btn-ghost">How we pack &amp; ship</a>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <svg viewBox="0 0 300 340" fill="none">
+      <ellipse cx="150" cy="320" rx="90" ry="10" fill="#1A2318" opacity="0.06"/>
+      <path d="M100 250H200L188 320H112L100 250Z" fill="#BA6146" opacity="0.85"/>
+      <path d="M100 250H200L196 268H104L100 250Z" fill="#8f4a37"/>
+      <path d="M150 250C150 250 60 230 55 140C130 130 150 250 150 250Z" fill="#4B6B45"/>
+      <path d="M150 250C150 250 240 230 245 140C170 130 150 250 150 250Z" fill="#3F5D3A"/>
+      <path d="M150 250C150 250 100 190 110 90C175 100 150 250 150 250Z" fill="#5F8256"/>
+      <path d="M150 250C150 250 200 190 190 90C125 100 150 250 150 250Z" fill="#3F5D3A"/>
+      <path d="M150 250C150 250 130 160 165 70C205 100 150 250 150 250Z" fill="#7C4B63" opacity="0.9"/>
+    </svg>
+  </div>
+  <svg class="leaf-watermark" viewBox="0 0 1240 420" preserveAspectRatio="xMidYMid slice">
+    <path d="M900 -20C1100 40 1120 220 950 340C900 200 850 40 900 -20Z" fill="#3F5D3A"/>
+    <path d="M1150 100C1300 140 1320 260 1200 340C1160 240 1120 150 1150 100Z" fill="#7C4B63"/>
+  </svg>
+</section>
+
+<!-- ================= LIGHT FILTER ================= -->
+<div class="filter-band">
+  <div class="filter-inner" id="filterBand">
+    <span class="filter-label">Shop by light</span>
+    <!-- chips injected by JS -->
+  </div>
+</div>
+
+<!-- ================= SHOP ================= -->
+<section class="shop-section" id="shop">
+  <div class="section-head">
+    <div>
+      <h2>The current collection</h2>
+      <p>Each card shows what the plant actually needs — not a star rating, a real read on light and effort.</p>
+    </div>
+  </div>
+  <div class="grid" id="productGrid"></div>
+</section>
+
+<!-- ================= CARE BAND ================= -->
+<section class="care-band" id="care">
+  <div class="care-band-inner">
+    <h2>Three things we do before a plant ever reaches your door.</h2>
+    <div class="care-item">
+      <div class="num mono">01</div>
+      <h4>Root check</h4>
+      <p>Every plant is slipped from its nursery pot and checked for rot or circling roots before packing.</p>
+    </div>
+    <div class="care-item">
+      <div class="num mono">02</div>
+      <h4>Dry transit</h4>
+      <p>Soil is kept on the drier side for shipping — it travels lighter and roots handle it better than wet transit.</p>
+    </div>
+    <div class="care-item">
+      <div class="num mono">03</div>
+      <h4>A note, not a manual</h4>
+      <p>Each box ships with a single card: your plant's name, its light needs, and one thing to watch for.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer class="footer" id="footer">
+  <div class="footer-top">
+    <h2>Get one new plant note a month. Nothing else.</h2>
+    <div class="subscribe">
+      <input type="email" placeholder="you@email.com" />
+      <button>Subscribe →</button>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Understory Plant Co. — Chennai</span>
+    <span>Mon–Sat, 10am–7pm · hello@understoryplants.example</span>
+  </div>
+</footer>
+
+<!-- ================= CART DRAWER ================= -->
+<div class="overlay" id="overlay"></div>
+<aside class="drawer" id="drawer">
+  <div class="drawer-head">
+    <h3>Your cart</h3>
+    <button class="drawer-close" id="drawerClose">&times;</button>
+  </div>
+  <div class="drawer-body" id="drawerBody"></div>
+  <div class="drawer-foot">
+    <div class="subtotal-row">
+      <span>Subtotal</span>
+      <span class="amount mono" id="subtotalAmount">₹0</span>
+    </div>
+    <button class="checkout-btn" id="checkoutBtn">Checkout</button>
+    <p class="drawer-note">Shipping and any care-kit add-ons are calculated at checkout.</p>
+  </div>
+</aside>
+
+<div class="toast" id="toast">Added to cart</div>
+
+<script>
+/* ============ DATA ============ */
+const LIGHT = {
+  low:    { label:'Low light',    color:'#5F8256' },
+  medium: { label:'Medium light', color:'#C9A66B' },
+  bright: { label:'Bright light', color:'#BA6146' }
+};
+
+const PRODUCTS = [
+  { id:1,  name:'Monstera Deliciosa', latin:'Monstera deliciosa', price:1450, light:'bright', care:2, hue:132, blurb:'Fenestrated leaves that get more dramatic with every new one.' },
+  { id:2,  name:'Snake Plant',        latin:'Dracaena trifasciata', price:650,  light:'low',    care:1, hue:118, blurb:'Goes weeks without water and still looks freshly potted.' },
+  { id:3,  name:'Golden Pothos',      latin:'Epipremnum aureum', price:450,  light:'low',    care:1, hue:96,  blurb:'Trails beautifully off a shelf — trim it, root it, repeat.' },
+  { id:4,  name:'Fiddle Leaf Fig',    latin:'Ficus lyrata', price:1800, light:'bright', care:3, hue:128, blurb:'The statement plant. Wants consistency more than attention.' },
+  { id:5,  name:'ZZ Plant',           latin:'Zamioculcas zamiifolia', price:700,  light:'low',    care:1, hue:140, blurb:'Glossy, upright, and nearly impossible to overwater by accident.' },
+  { id:6,  name:'Peace Lily',         latin:'Spathiphyllum wallisii', price:900,  light:'medium', care:2, hue:330, blurb:'Tells you it needs water by drooping, then bounces right back.' },
+  { id:7,  name:'Calathea Orbifolia', latin:'Goeppertia orbifolia', price:1200, light:'medium', care:3, hue:150, blurb:'Silver-striped leaves that fold up at night like clockwork.' },
+  { id:8,  name:'Areca Palm',         latin:'Dypsis lutescens', price:1100, light:'bright', care:2, hue:104, blurb:'Feathery fronds that soften any corner they stand in.' },
+  { id:9,  name:'String of Pearls',   latin:'Curio rowleyanus', price:550,  light:'bright', care:2, hue:112, blurb:'A hanging trail of tiny green beads — best seen from below.' },
+  { id:10, name:'Rubber Plant',       latin:'Ficus elastica', price:950,  light:'medium', care:1, hue:150, blurb:'Deep, glossy leaves and a forgiving watering schedule.' },
+  { id:11, name:'Boston Fern',        latin:'Nephrolepis exaltata', price:600,  light:'medium', care:2, hue:126, blurb:'Wants humidity, rewards it with the fullest fronds you\'ll grow.' },
+  { id:12, name:'Aloe Vera',          latin:'Aloe barbadensis', price:400,  light:'bright', care:1, hue:118, blurb:'A sunny windowsill and neglect are basically the whole recipe.' },
+];
+
+/* ============ GENERATIVE PLANT ICON ============ */
+function plantSVG(p, size){
+  const potColor = p.hue > 300 ? '#7C4B63' : '#BA6146';
+  const leafCount = 3 + p.care;
+  let leaves = '';
+  for(let i=0;i<leafCount;i++){
+    const angle = (i/(leafCount-1) - 0.5) * 110;
+    const len = 34 + (i%3)*6;
+    const lightness = 32 + i*4;
+    const hue = p.hue + (i%2===0 ? -6 : 6);
+    leaves += `<path d="M60 78 C ${60+angle*0.3} ${78-len}, ${60+angle*0.7} ${78-len*1.3}, 60 ${78-len*1.6}"
+      stroke="hsl(${hue},32%,${lightness}%)" stroke-width="7" stroke-linecap="round" fill="none"
+      transform="rotate(${angle} 60 78)"/>`;
+  }
+  return `<svg viewBox="0 0 120 120" fill="none">
+    <path d="M40 90H80L74 112H46L40 90Z" fill="${potColor}"/>
+    <path d="M40 90H80L78 97H42L40 90Z" fill="${potColor}" opacity="0.7"/>
+    ${leaves}
+  </svg>`;
+}
+
+function careLeaves(level){
+  let out = '';
+  for(let i=0;i<3;i++){
+    out += `<svg class="care-leaf ${i<level?'filled':''}" viewBox="0 0 24 24" fill="none">
+      <path d="M12 21C12 21 4 17 4 9C13 9 12 21 12 21Z" fill="${i<level?'#3F5D3A':'#93A382'}"/>
+    </svg>`;
+  }
+  return out;
+}
+
+/* ============ RENDER PRODUCTS ============ */
+const grid = document.getElementById('productGrid');
+let activeFilter = 'all';
+
+function renderGrid(){
+  grid.innerHTML = '';
+  const list = PRODUCTS.filter(p => activeFilter==='all' || p.light===activeFilter);
+  list.forEach(p => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <div class="card-art">
+        <span class="badge-light"><span class="dot" style="background:${LIGHT[p.light].color}"></span>${LIGHT[p.light].label}</span>
+        ${plantSVG(p)}
+      </div>
+      <div class="card-body">
+        <h3>${p.name}</h3>
+        <div class="card-latin">${p.latin}</div>
+        <p class="card-blurb">${p.blurb}</p>
+        <div class="care-row">
+          <span class="care-label">Care effort</span>
+          ${careLeaves(p.care)}
+        </div>
+        <div class="card-footer">
+          <span class="price">₹${p.price}</span>
+          <button class="add-btn" data-id="${p.id}">Add to cart</button>
+        </div>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in-view'); obs.unobserve(e.target); } });
+  }, { threshold:0.12 });
+  document.querySelectorAll('.card').forEach(c => obs.observe(c));
+
+  grid.querySelectorAll('.add-btn').forEach(btn => {
+    btn.addEventListener('click', () => addToCart(parseInt(btn.dataset.id)));
+  });
+}
+
+/* ============ FILTER CHIPS ============ */
+const filterBand = document.getElementById('filterBand');
+const filters = [
+  { key:'all', label:'All plants', color:'#1A2318' },
+  { key:'low', label:LIGHT.low.label, color:LIGHT.low.color },
+  { key:'medium', label:LIGHT.medium.label, color:LIGHT.medium.color },
+  { key:'bright', label:LIGHT.bright.label, color:LIGHT.bright.color },
+];
+filters.forEach(f => {
+  const chip = document.createElement('button');
+  chip.className = 'chip';
+  chip.dataset.key = f.key;
+  chip.dataset.active = f.key==='all';
+  chip.innerHTML = f.key==='all' ? f.label : `<span class="dot" style="background:${f.color}"></span>${f.label}`;
+  chip.addEventListener('click', () => {
+    activeFilter = f.key;
+    document.querySelectorAll('.chip').forEach(c => c.dataset.active = (c.dataset.key===f.key));
+    renderGrid();
+  });
+  filterBand.appendChild(chip);
+});
+
+/* ============ CART STATE (in-memory) ============ */
+let cart = [];
+
+function addToCart(id){
+  const existing = cart.find(c => c.id===id);
+  if(existing){ existing.qty++; } else { cart.push({ id, qty:1 }); }
+  renderCart();
+  showToast('Added to cart');
+}
+
+function changeQty(id, delta){
+  const item = cart.find(c => c.id===id);
+  if(!item) return;
+  item.qty += delta;
+  if(item.qty <= 0) cart = cart.filter(c => c.id!==id);
+  renderCart();
+}
+
+function removeItem(id){
+  cart = cart.filter(c => c.id!==id);
+  renderCart();
+}
+
+function renderCart(){
+  const body = document.getElementById('drawerBody');
+  const countEl = document.getElementById('cartCount');
+  const subtotalEl = document.getElementById('subtotalAmount');
+
+  const totalQty = cart.reduce((s,c) => s+c.qty, 0);
+  countEl.textContent = totalQty;
+
+  if(cart.length===0){
+    body.innerHTML = `<div class="drawer-empty">Your cart is empty.<br>Something in the collection might change that.</div>`;
+    subtotalEl.textContent = '₹0';
+    return;
+  }
+
+  let subtotal = 0;
+  body.innerHTML = cart.map(c => {
+    const p = PRODUCTS.find(pr => pr.id===c.id);
+    subtotal += p.price * c.qty;
+    return `
+      <div class="cart-item">
+        <div class="cart-item-art">${plantSVG(p)}</div>
+        <div class="cart-item-info">
+          <h4>${p.name}</h4>
+          <span class="mono" style="font-size:0.85rem;">₹${p.price}</span>
+          <div class="cart-item-controls">
+            <button class="qty-btn" onclick="changeQty(${p.id}, -1)">−</button>
+            <span class="mono" style="font-size:0.85rem;">${c.qty}</span>
+            <button class="qty-btn" onclick="changeQty(${p.id}, 1)">+</button>
+            <span class="remove-link" onclick="removeItem(${p.id})">Remove</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+  subtotalEl.textContent = '₹' + subtotal.toLocaleString('en-IN');
+}
+
+/* ============ TOAST ============ */
+let toastTimer;
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 1800);
+}
+
+/* ============ DRAWER OPEN/CLOSE ============ */
+const drawer = document.getElementById('drawer');
+const overlay = document.getElementById('overlay');
+function openDrawer(){ drawer.classList.add('open'); overlay.classList.add('open'); }
+function closeDrawer(){ drawer.classList.remove('open'); overlay.classList.remove('open'); }
+document.getElementById('cartToggle').addEventListener('click', openDrawer);
+document.getElementById('drawerClose').addEventListener('click', closeDrawer);
+overlay.addEventListener('click', closeDrawer);
+document.getElementById('checkoutBtn').addEventListener('click', () => {
+  if(cart.length===0){ showToast('Your cart is empty'); return; }
+  showToast('This is a demo — no real checkout yet');
+});
+
+/* ============ INIT ============ */
+renderGrid();
+renderCart();
+</script>
+</body>
+</html>
